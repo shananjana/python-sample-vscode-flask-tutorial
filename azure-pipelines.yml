@@ -34,3 +34,31 @@ steps:
     pip install pytest pytest-azurepipelines
     pytest
   displayName: 'pytest'
+
+- task: AzureCLI@2
+  inputs:
+    scriptType: 'ps'
+    scriptLocation: 'inlineScript'
+    inlineScript: 'az monitor app-insights query --app cf464fbd-e3f0-4b0c-970a-c97f178ce338 --analytics-query ''customEvents | where timestamp > ago(30d)'' > data.json'
+
+- task: AzureCLI@1
+  displayName: 'Monitoring past data'
+  inputs:
+    azureSubscription: ''
+    scriptLocation: inlineScript
+    inlineScript: 'az monitor app-insights query --app cf464fbd-e3f0-4b0c-970a-c97f178ce338 --analytics-query ''customEvents | where timestamp > ago(30d)'' > data.json'
+
+- task: CmdLine@2
+  inputs:
+    script: |
+      echo Write your commands here
+      
+      echo Hello world
+
+
+- task: GitHubComment@0
+  inputs:
+    gitHubConnection: 'shananjana'
+    repositoryName: 'shananjana/python-sample-vscode-flask-tutorial'
+    id: '1'
+    comment: 'test is running and data is collected'
