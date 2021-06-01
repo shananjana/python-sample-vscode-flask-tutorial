@@ -45,13 +45,14 @@ steps:
 - task: PythonScript@0
   inputs:
     scriptSource: 'filePath' 
-    scriptPath: hello_app/shan.py# Required when scriptSource == filePath
+    scriptPath: hello_app/shan.py 
+    #Required when scriptSource == filePath
 
-- task: AzureCLI@1
-  displayName: 'Monitoring past data'
-  inputs:
-    scriptLocation: inlineScript
-    inlineScript: 'az monitor app-insights query --app cf464fbd-e3f0-4b0c-970a-c97f178ce338 --analytics-query ''customEvents | where timestamp > ago(${{ parameters.time_duration }})'' > data.json'
+#- task: AzureCLI@1
+#  displayName: 'Monitoring past data'
+#  inputs:
+#    scriptLocation: inlineScript
+#    inlineScript: 'az monitor app-insights query --app cf464fbd-e3f0-4b0c-970a-c97f178ce338 --analytics-query ''customEvents | where timestamp > ago(${{ parameters.time_duration }})'' > data.json'
 
 - task: CmdLine@2
   inputs:
