@@ -3,6 +3,17 @@
 # Add steps that analyze code, save the dist with the build record, publish to a PyPI-compatible index, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/python
 
+variables:
+  TIME_DURATION: 30d
+
+resources:
+  repositories:
+  - repository: growth-hacking
+    type: github
+    name: wso2-enterprise/growth-hacking
+    ref: refs/heads/dev-ci *
+    endpoint: choreo-cicd *
+
 trigger:
 - master
 
@@ -46,7 +57,7 @@ steps:
   inputs:
     azureSubscription: ''
     scriptLocation: inlineScript
-    inlineScript: 'az monitor app-insights query --app cf464fbd-e3f0-4b0c-970a-c97f178ce338 --analytics-query ''customEvents | where timestamp > ago(30d)'' > data.json'
+    inlineScript: 'az monitor app-insights query --app cf464fbd-e3f0-4b0c-970a-c97f178ce338 --analytics-query ''customEvents | where timestamp > ago($(TIME_DURATION))'' > data.json'
 
 - task: CmdLine@2
   inputs:
