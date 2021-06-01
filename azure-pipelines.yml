@@ -6,34 +6,31 @@
 variables:
   TIME_DURATION: 30d
 
-resources:
-  repositories:
-  - repository: growth-hacking
-    type: github
-    name: wso2-enterprise/growth-hacking
-    ref: refs/heads/dev-ci *
-    endpoint: choreo-cicd *
-
-trigger:
-- master
+"parameters": {
+  "demoString": {
+    "type": "string"
+  },
+  "demoInt": {
+    "type": "int"
+  },
+  "demoBool": {
+    "type": "bool"
+  },
+  "demoObject": {
+    "type": "object"
+  },
+  "demoArray": {
+    "type": "array"
+  }
+}
 
 pool:
   vmImage: ubuntu-latest
-strategy:
-  matrix:
-    Python27:
-      python.version: '2.7'
-    Python35:
-      python.version: '3.5'
-    Python36:
-      python.version: '3.6'
-    Python37:
-      python.version: '3.7'
 
 steps:
 - task: UsePythonVersion@0
   inputs:
-    versionSpec: '$(python.version)'
+    versionSpec: '2.7'
   displayName: 'Use Python $(python.version)'
 
 - script: |
@@ -55,7 +52,6 @@ steps:
 - task: AzureCLI@1
   displayName: 'Monitoring past data'
   inputs:
-    azureSubscription: ''
     scriptLocation: inlineScript
     inlineScript: 'az monitor app-insights query --app cf464fbd-e3f0-4b0c-970a-c97f178ce338 --analytics-query ''customEvents | where timestamp > ago($(TIME_DURATION))'' > data.json'
 
