@@ -53,12 +53,8 @@ steps:
 
 - task: PublishPipelineArtifact@1
   inputs:
-    targetPath: /home/shan/artifacts/bin/WebApp
+    targetPath: /home/shan/artifacts/bin/webApp
     artifactName: WebApp
-    
-- task: DownloadPipelineArtifact@2
-  inputs:
-    artifact: WebApp
 
 - task: GitHubComment@0
   inputs:
