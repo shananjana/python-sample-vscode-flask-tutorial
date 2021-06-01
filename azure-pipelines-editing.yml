@@ -53,7 +53,7 @@ steps:
 
 - task: PublishPipelineArtifact@1
   inputs:
-    targetPath: $(System.DefaultWorkingDirectory)/bin/WebApp
+    targetPath: /home/shan/artifacts/bin/WebApp
     artifactName: WebApp
 
 - task: GitHubComment@0
