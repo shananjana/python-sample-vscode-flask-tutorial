@@ -3,26 +3,25 @@
 # Add steps that analyze code, save the dist with the build record, publish to a PyPI-compatible index, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/python
 
-variables:
-  TIME_DURATION: 30d
+parameters:
+- name: time_duration
+  displayName: Time Duration
+  type: string
+  default: 30d
+  values:
+  - 30d
+  - 14d
+  - 7d
+  - 28d
+- name: python_version
+  displayName: Python Version
+  default: 2.7
+  values:
+  - 3.0
+  - 2.7
+  - 3.2
+  - 3.4
 
-"parameters": {
-  "demoString": {
-    "type": "string"
-  },
-  "demoInt": {
-    "type": "int"
-  },
-  "demoBool": {
-    "type": "bool"
-  },
-  "demoObject": {
-    "type": "object"
-  },
-  "demoArray": {
-    "type": "array"
-  }
-}
 
 pool:
   vmImage: ubuntu-latest
@@ -30,8 +29,8 @@ pool:
 steps:
 - task: UsePythonVersion@0
   inputs:
-    versionSpec: '2.7'
-  displayName: 'Use Python $(python.version)'
+    versionSpec:  '${{ parameters.python_version }}'
+  displayName: 'Use Python ${{ parameters.python_version }}'
 
 - script: |
     python -m pip install --upgrade pip
@@ -43,24 +42,23 @@ steps:
     pytest
   displayName: 'pytest'
 
-- task: AzureCLI@2
+- task: PythonScript@0
   inputs:
-    scriptType: 'ps'
-    scriptLocation: 'inlineScript'
-    inlineScript: 'az monitor app-insights query --app cf464fbd-e3f0-4b0c-970a-c97f178ce338 --analytics-query ''customEvents | where timestamp > ago(30d)'' > data.json'
+    scriptSource: 'filePath' 
+    scriptPath: hello_app/shan.py# Required when scriptSource == filePath
 
 - task: AzureCLI@1
   displayName: 'Monitoring past data'
   inputs:
     scriptLocation: inlineScript
-    inlineScript: 'az monitor app-insights query --app cf464fbd-e3f0-4b0c-970a-c97f178ce338 --analytics-query ''customEvents | where timestamp > ago($(TIME_DURATION))'' > data.json'
+    inlineScript: 'az monitor app-insights query --app cf464fbd-e3f0-4b0c-970a-c97f178ce338 --analytics-query ''customEvents | where timestamp > ago(${{ parameters.time_duration }})'' > data.json'
 
 - task: CmdLine@2
   inputs:
     script: |
-      echo Write your commands here
+      echo Writeyourcommands here
       
-      echo Hello world
+      echo Helloworld
 
 
 - task: GitHubComment@0
